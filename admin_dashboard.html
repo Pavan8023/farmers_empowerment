@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Krishi Udaan Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --bg-color: #ffffff;
+      --text-color: #333333;
+      --card-bg: #f9fafb;
+      --border-color: #e5e7eb;
+      --sidebar-bg: #1a2d1a;  /* Dark green for agriculture theme */
+      --sidebar-text: #f8fafc;
+      --hover-bg: #2d4d32;    /* Darker green hover */
+    }
+
+    .dark-mode {
+      --bg-color: #0f172a;
+      --text-color: #f8fafc;
+      --card-bg: #1e293b;
+      --border-color: #334155;
+      --sidebar-bg: #0d1a0d;  /* Darker green in dark mode */
+      --sidebar-text: #e2e8f0;
+      --hover-bg: #3d5a42;    /* Adjusted hover for dark mode */
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .sidebar {
+      background-color: var(--sidebar-bg);
+      color: var(--sidebar-text);
+    }
+
+    .sidebar button, .sidebar a {
+      transition: background-color 0.2s ease;
+    }
+    
+    .sidebar button:hover, .sidebar a:hover {
+      background-color: var(--hover-bg);
+    }
+
+    iframe {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      transition: background-color 0.3s ease;
+    }
+
+    #darkModeToggle {
+      background-color: var(--card-bg);
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+      transition: all 0.3s ease;
+    }
+    
+    #darkModeToggle:hover {
+      filter: brightness(90%);
+    }
+  </style>
+</head>
+<body class="flex h-screen">
+  <!-- Sidebar -->
+  <div class="sidebar w-1/5 p-4 space-y-4">
+    <h2 class="text-2xl font-bold mb-6">🌱 Krishi Udaan Admin</h2>
+    <button onclick="loadPage('view_db.html')" class="w-full text-left p-2 rounded hover:bg-green-700">
+      📊 View/Edit DB
+    </button>
+    <button onclick="loadPage('farmer_db.html')" class="w-full text-left p-2 rounded hover:bg-green-700">
+      👨🌾 Farmer DB
+    </button>
+    <button onclick="loadPage('supplier_db.html')" class="w-full text-left p-2 rounded hover:bg-green-700">
+      🚚 Supplier DB
+    </button>
+    <button onclick="adminLogout()" class="w-full text-left p-2 rounded hover:bg-red-600 mt-8">
+      🔒 Logout
+    </button>
+  </div>
+
+  <!-- Content Iframe -->
+  <div class="w-4/5 h-full">
+    <iframe id="contentFrame" class="w-full h-full" src="" frameborder="0"></iframe>
+  </div>
+
+  <!-- Dark Mode Toggle -->
+  <button id="darkModeToggle" class="fixed top-4 right-4 p-2 rounded-full shadow-lg">
+    <span id="darkModeIcon">🌙</span> Toggle Mode
+  </button>
+
+  <script>
+    function initDarkMode() {
+      const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+      const currentMode = localStorage.getItem('darkMode') || 
+                         (prefersDarkScheme.matches ? 'dark' : 'light');
+      setDarkMode(currentMode === 'dark');
+    }
+
+    function setDarkMode(isDark) {
+      document.documentElement.classList.toggle('dark-mode', isDark);
+      localStorage.setItem('darkMode', isDark ? 'dark' : 'light');
+      updateIframeTheme(isDark);
+      document.getElementById('darkModeIcon').textContent = isDark ? '☀️' : '🌙';
+    }
+
+    function updateIframeTheme(isDark) {
+      const iframe = document.getElementById('contentFrame');
+      if (!iframe.contentWindow) return;
+      
+      try {
+        iframe.contentWindow.postMessage({
+          type: 'THEME_UPDATE',
+          isDark: isDark,
+          theme: {
+            bgColor: isDark ? '#0f172a' : '#ffffff',
+            textColor: isDark ? '#f8fafc' : '#333333',
+            cardBg: isDark ? '#1e293b' : '#f9fafb',
+            borderColor: isDark ? '#334155' : '#e5e7eb'
+          }
+        }, '*');
+        iframe.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      } catch (e) {
+        console.log("Theme sync error:", e);
+      }
+    }
+
+    function loadPage(page) {
+      const iframe = document.getElementById('contentFrame');
+      iframe.src = page;
+      
+      iframe.onload = function() {
+        const isDark = document.documentElement.classList.contains('dark-mode');
+        updateIframeTheme(isDark);
+        setTimeout(() => updateIframeTheme(isDark), 500);
+      };
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      initDarkMode();
+      document.getElementById('darkModeToggle').addEventListener('click', () => {
+        setDarkMode(!document.documentElement.classList.contains('dark-mode'));
+      });
+      
+      if (!sessionStorage.getItem('adminLoggedIn')) {
+        window.location.href = 'admin_login.html';
+      }
+    });
+
+    window.addEventListener('message', function(event) {
+      if (event.data.type === 'THEME_REQUEST') {
+        updateIframeTheme(document.documentElement.classList.contains('dark-mode'));
+      }
+    });
+
+    function adminLogout() {
+      sessionStorage.removeItem('adminLoggedIn');
+      window.location.href = 'admin_login.html';
+    }
+  </script>
+</body>
+</html>

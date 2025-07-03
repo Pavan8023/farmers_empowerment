@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Krishi Udaan - Login Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    @keyframes fadeUp {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { animation: fadeUp 1s ease forwards; }
+    .fade-up-delayed { animation: fadeUp 1s ease forwards 0.5s; }
+    .fade-up-late { animation: fadeUp 1s ease forwards 1s; }
+    .agro-glow {
+      box-shadow: 0 0 20px rgba(56, 161, 105, 0.3);
+      transition: all 0.3s ease;
+    }
+    .agro-glow:hover {
+      box-shadow: 0 0 40px rgba(56, 161, 105, 0.5);
+      transform: scale(1.05);
+    }
+    .farm-gradient {
+      background: linear-gradient(135deg, #1a2d1a 0%, #0c290f 100%);
+    }
+    .form-container {
+      position: relative;
+      overflow: hidden;
+    }
+    .login-form {
+      transition: transform 0.5s ease-in-out;
+    }
+    .supplier-active .farmer-form {
+      transform: translateX(-100%);
+    }
+    .supplier-active .supplier-form {
+      transform: translateX(-100%);
+    }
+    .tab-button.active {
+      border-bottom: 3px solid #4ade80;
+    }
+    /* Add/Update these styles */
+    .form-container {
+      position: relative;
+      overflow: hidden;
+      height: 400px; /* Fixed height for smooth transition */
+    }
+    
+    .forms-wrapper {
+      display: flex;
+      width: 200%;
+      height: 100%;
+      transition: transform 0.5s ease-in-out;
+    }
+    
+    .login-form {
+      width: 50%;
+      padding: 0 15px;
+    }
+    
+    .supplier-active .forms-wrapper {
+      transform: translateX(-50%);
+    }
+    
+    .tab-button.active {
+      position: relative;
+      color: #fff;
+    }
+    
+    .tab-button.active::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: #4ade80;
+      border-radius: 2px;
+    }
+  </style>
+</head>
+<body class="farm-gradient text-white min-h-screen flex items-center justify-center px-4">
+
+  <div class="max-w-md w-full space-y-8 fade-up">
+    <div class="text-center fade-up-delayed">
+      <h1 class="text-4xl font-bold text-green-300">Krishi<span class="text-white font-extrabold">Udaan</span></h1>
+      <div class="flex justify-center gap-8 mt-6">
+        <button class="tab-button text-xl font-semibold text-green-200 active" data-type="farmer">
+          Farmer Login
+        </button>
+        <button class="tab-button text-xl font-semibold text-green-200" data-type="supplier">
+          Supplier Login
+        </button>
+      </div>
+    </div>
+
+  <div class="form-container relative h-96">
+    <div class="forms-wrapper">
+    <!-- Farmer Login Form -->
+    <form id="farmer-form" class="login-form farmer-form mt-8 space-y-6 fade-up-late">
+      <div class="rounded-md shadow-sm -space-y-px">
+        <div>
+          <input id="farmer-mobile" name="mobile" type="tel" 
+                 required pattern="\+[0-9]{11,15}"
+                 class="appearance-none relative block w-full px-3 py-2 border border-green-600 bg-green-900 placeholder-green-400 text-white rounded-t-md focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" 
+                 placeholder="+91XXXXXXXXXX">
+        </div>
+        <div>
+          <input id="farmer-pin" name="pin" type="password" 
+                 required minlength="6" maxlength="6"
+                 class="appearance-none relative block w-full px-3 py-2 border border-green-600 bg-green-900 placeholder-green-400 text-white rounded-b-md focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" 
+                 placeholder="6-digit PIN">
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <input id="farmer-remember" name="remember-me" type="checkbox" 
+                 class="h-4 w-4 text-green-500 focus:ring-green-500 border-green-600 rounded bg-green-800">
+          <label for="farmer-remember" class="ml-2 block text-sm text-green-300">Remember this device</label>
+        </div>
+      </div>
+
+      <div>
+        <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-green-500 text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 agro-glow">
+          <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+            <i class="fas fa-tractor text-green-200 group-hover:text-white"></i>
+          </span>
+          Access Farm Dashboard
+        </button>
+      </div>
+      <p class="text-center text-sm text-green-400">
+        New to Krishi Udaan?
+        <a href="/farmers/register.html" class="font-medium text-white hover:text-green-300 underline">Register your farm</a>
+      </p>
+    </form>
+
+    <!-- Supplier Login Form -->
+    <form id="supplier-form" class="login-form supplier-form mt-8 space-y-6 fade-up-late">
+      <div class="rounded-md shadow-sm -space-y-px">
+        <div>
+          <input id="supplier-mobile" name="mobile" type="tel" 
+                 required pattern="\+[0-9]{11,15}"
+                 class="appearance-none relative block w-full px-3 py-2 border border-green-600 bg-green-900 placeholder-green-400 text-white rounded-t-md focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" 
+                 placeholder="+91XXXXXXXXXX">
+        </div>
+        <div>
+          <input id="supplier-pin" name="pin" type="password" 
+                 required minlength="6" maxlength="6"
+                 class="appearance-none relative block w-full px-3 py-2 border border-green-600 bg-green-900 placeholder-green-400 text-white rounded-b-md focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" 
+                 placeholder="6-digit PIN">
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <input id="supplier-remember" name="remember-me" type="checkbox" 
+                 class="h-4 w-4 text-green-500 focus:ring-green-500 border-green-600 rounded bg-green-800">
+          <label for="supplier-remember" class="ml-2 block text-sm text-green-300">Remember this device</label>
+        </div>
+      </div>
+
+      <div>
+        <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-green-500 text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 agro-glow">
+          <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+            <i class="fas fa-truck text-green-200 group-hover:text-white"></i>
+          </span>
+          Access Supplier Dashboard
+        </button>
+      </div>
+      <p class="text-center text-sm text-green-400">
+        New to Krishi Udaan?
+        <a href="register.html" class="font-medium text-white hover:text-green-300 underline">Register as supplier</a>
+      </p>
+    </form>
+  </div>
+</div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { 
+      getAuth, 
+      signInWithEmailAndPassword,
+      setPersistence,
+      browserSessionPersistence,
+      browserLocalPersistence
+    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { 
+      getFirestore,
+      doc,
+      getDoc
+    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCeLlMI71qya0Ij1t14xp9lqRPoHEdDkNY",
+      authDomain: "farmers-5d7eb.firebaseapp.com",
+      projectId: "farmers-5d7eb",
+      storageBucket: "farmers-5d7eb.firebasestorage.app",
+      messagingSenderId: "653225733546",
+      appId: "1:653225733546:web:10b1220d5a00030aca8fd3",
+      measurementId: "G-KHL7Z6SJQX"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Updated Tab Switching Logic
+    document.querySelectorAll('.tab-button').forEach(button => {
+      button.addEventListener('click', () => {
+        const formContainer = document.querySelector('.form-container');
+        const isSupplier = button.dataset.type === 'supplier';
+        
+        document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+        button.classList.add('active');
+        
+        formContainer.classList.toggle('supplier-active', isSupplier);
+      });
+    });
+
+    // Form Submission Handlers
+    const handleLogin = async (formType, mobile, pin, rememberMe) => {
+      try {
+        if (!mobile.startsWith('+')) {
+          throw new Error('Please enter mobile number with country code (e.g. +91...)');
+        }
+        if (pin.length !== 6 || !/^\d+$/.test(pin)) {
+          throw new Error('PIN must be 6 digits');
+        }
+
+        await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence);
+        const email = `${mobile}@krishiudaan.in`;
+        const userCredential = await signInWithEmailAndPassword(auth, email, pin);
+        
+        const collection = formType === 'farmer' ? 'farmer_register' : 'market_register';
+        const userDoc = await getDoc(doc(db, collection, userCredential.user.uid));
+        
+        if (!userDoc.exists()) {
+          await auth.signOut();
+          throw new Error(`${formType.charAt(0).toUpperCase() + formType.slice(1)} account not found`);
+        }
+
+        window.location.href = formType === 'farmer' ? 'dash.html' : 'supplier-dashboard.html';
+
+      } catch (error) {
+        handleLoginError(error);
+      }
+    };
+
+    document.getElementById('farmer-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const mobile = document.getElementById('farmer-mobile').value.trim();
+      const pin = document.getElementById('farmer-pin').value.trim();
+      const rememberMe = document.getElementById('farmer-remember').checked;
+      await handleLogin('farmer', mobile, pin, rememberMe);
+    });
+
+    document.getElementById('supplier-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const mobile = document.getElementById('supplier-mobile').value.trim();
+      const pin = document.getElementById('supplier-pin').value.trim();
+      const rememberMe = document.getElementById('supplier-remember').checked;
+      await handleLogin('supplier', mobile, pin, rememberMe);
+    });
+
+    function handleLoginError(error) {
+      const errorMap = {
+        'auth/invalid-email': 'Invalid mobile number format',
+        'auth/user-not-found': 'Account not registered',
+        'auth/wrong-password': 'Incorrect PIN',
+        'auth/too-many-requests': 'Too many attempts. Try again later'
+      };
+      alert(errorMap[error.code] || error.message.replace('Firebase: ', ''));
+    }
+</script>
+</body>
+</html>

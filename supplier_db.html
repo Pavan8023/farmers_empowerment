@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supplier Management - Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCeLlMI71qya0Ij1t14xp9lqRPoHEdDkNY",
+            authDomain: "farmers-5d7eb.firebaseapp.com",
+            projectId: "farmers-5d7eb",
+            storageBucket: "farmers-5d7eb.firebasestorage.app",
+            messagingSenderId: "653225733546",
+            appId: "1:653225733546:web:10b1220d5a00030aca8fd3",
+            measurementId: "G-KHL7Z6SJQX"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function loadSuppliers() {
+            const querySnapshot = await getDocs(collection(db, "market_register"));
+            const supplierTbody = document.querySelector('#supplierTable tbody');
+            
+            supplierTbody.innerHTML = '';
+            document.getElementById('totalSuppliers').textContent = querySnapshot.size;
+
+            querySnapshot.forEach((supplierDoc) => {
+                const supplier = supplierDoc.data();
+                const supplierDetails = supplier.supplierDetails || {};
+
+                supplierTbody.innerHTML += `
+                    <tr class="hover:bg-gray-50" data-uid="${supplierDoc.id}">
+                        <td class="p-3 border">
+                            <input value="${supplier.name || ''}" 
+                                   class="w-full p-2 border rounded">
+                        </td>
+                        <td class="p-3 border">
+                            <input value="${supplier.mobile || ''}" 
+                                   class="w-full p-2 border rounded">
+                        </td>
+                        <td class="p-3 border">
+                            <select class="w-full p-2 border rounded">
+                                <option ${supplierDetails.supplyType === 'seeds' ? 'selected' : ''}>Seeds</option>
+                                <option ${supplierDetails.supplyType === 'equipment' ? 'selected' : ''}>Equipment</option>
+                                <option ${supplierDetails.supplyType === 'fertilizers' ? 'selected' : ''}>Fertilizers</option>
+                                <option ${supplierDetails.supplyType === 'pesticides' ? 'selected' : ''}>Pesticides</option>
+                            </select>
+                        </td>
+                        <td class="p-3 border">
+                            <input value="${supplierDetails.serviceAreas?.join(', ') || ''}" 
+                                   class="w-full p-2 border rounded">
+                        </td>
+                        <td class="p-3 border">
+                            <select class="w-full p-2 border rounded">
+                                <option ${supplierDetails.verificationStatus === 'pending' ? 'selected' : ''}>Pending</option>
+                                <option ${supplierDetails.verificationStatus === 'verified' ? 'selected' : ''}>Verified</option>
+                                <option ${supplierDetails.verificationStatus === 'rejected' ? 'selected' : ''}>Rejected</option>
+                            </select>
+                        </td>
+                        <td class="p-3 border">
+                            <button onclick="saveSupplier('${supplierDoc.id}')" 
+                                    class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                                Save
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        window.saveSupplier = async (supplierId) => {
+            const row = document.querySelector(`tr[data-uid="${supplierId}"]`);
+            const fields = row.querySelectorAll('input, select');
+            
+            const updatedData = {
+                name: fields[0].value,
+                mobile: fields[1].value,
+                supplierDetails: {
+                    supplyType: fields[2].value.toLowerCase(),
+                    serviceAreas: fields[3].value.split(',').map(s => s.trim()),
+                    verificationStatus: fields[4].value.toLowerCase()
+                }
+            };
+
+            try {
+                await updateDoc(doc(db, "market_register", supplierId), updatedData);
+                alert('Supplier updated successfully!');
+                loadSuppliers();
+            } catch (error) {
+                alert('Error updating supplier: ' + error.message);
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', loadSuppliers);
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f8fafc;
+        }
+        .metric-card {
+            background: linear-gradient(145deg, #ffffff, #f1f5f9);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .glass-table {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(203, 213, 225, 0.3);
+        }
+    </style>
+</head>
+<body class="min-h-screen p-8 bg-gray-50">
+    <div class="max-w-7xl mx-auto space-y-8">
+        <!-- Supplier Count -->
+        <div class="metric-card p-6 max-w-xs mx-auto">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-600">Total Suppliers</h3>
+                    <p class="text-2xl font-bold text-gray-800" id="totalSuppliers">0</p>
+                </div>
+                <i class="fas fa-users text-3xl text-blue-500"></i>
+            </div>
+        </div>
+
+        <!-- Suppliers Table -->
+        <div class="glass-table rounded-xl shadow-lg overflow-hidden">
+            <div class="p-4 bg-white border-b">
+                <h2 class="text-xl font-bold text-gray-800">Supplier Database</h2>
+            </div>
+            <table id="supplierTable" class="w-full">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="p-3 text-left text-sm font-semibold text-gray-700">Name</th>
+                        <th class="p-3 text-left text-sm font-semibold text-gray-700">Mobile</th>
+                        <th class="p-3 text-left text-sm font-semibold text-gray-700">Type</th>
+                        <th class="p-3 text-left text-sm font-semibold text-gray-700">Service Areas</th>
+                        <th class="p-3 text-left text-sm font-semibold text-gray-700">Verification</th>
+                        <th class="p-3 text-left text-sm font-semibold text-gray-700">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    <!-- Supplier data will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

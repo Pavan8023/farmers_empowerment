@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer Database - Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCeLlMI71qya0Ij1t14xp9lqRPoHEdDkNY",
+            authDomain: "farmers-5d7eb.firebaseapp.com",
+            projectId: "farmers-5d7eb",
+            storageBucket: "farmers-5d7eb.firebasestorage.app",
+            messagingSenderId: "653225733546",
+            appId: "1:653225733546:web:10b1220d5a00030aca8fd3",
+            measurementId: "G-KHL7Z6SJQX"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function loadFarmers() {
+            const querySnapshot = await getDocs(collection(db, "farmer_register"));
+            const tbody = document.querySelector('#farmerTable tbody');
+            tbody.innerHTML = '';
+
+            // Update farmer count
+            document.getElementById('farmerCount').textContent = querySnapshot.size;
+
+            querySnapshot.forEach((doc) => {
+                const farmer = doc.data();
+                const row = `
+                    <tr class="hover:bg-gray-50" data-uid="${farmer.uid}">
+                        <td class="p-3 border">
+                            <input value="${farmer.name}" 
+                                   class="w-full p-2 border rounded">
+                        </td>
+                        <td class="p-3 border">
+                            <input value="${farmer.mobile}" 
+                                   class="w-full p-2 border rounded">
+                        </td>
+                        <td class="p-3 border">
+                            <select class="w-full p-2 border rounded">
+                                <option ${farmer.farmDetails.farmType === 'individual' && 'selected'}>Individual Farmer</option>
+                                <option ${farmer.farmDetails.farmType === 'cooperative' && 'selected'}>Cooperative Farm</option>
+                                <option ${farmer.farmDetails.farmType === 'organic' && 'selected'}>Organic Farm</option>
+                                <option ${farmer.farmDetails.farmType === 'horticulture' && 'selected'}>Horticulture</option>
+                            </select>
+                        </td>
+                        <td class="p-3 border">
+                            <input type="number" value="${farmer.farmDetails.landSize}" 
+                                   class="w-full p-2 border rounded">
+                        </td>
+                        <td class="p-3 border">
+                            <select class="w-full p-2 border rounded">
+                                <option ${farmer.farmDetails.irrigationType === 'rainfed' && 'selected'}>Rain-fed</option>
+                                <option ${farmer.farmDetails.irrigationType === 'canal' && 'selected'}>Canal</option>
+                                <option ${farmer.farmDetails.irrigationType === 'tubewell' && 'selected'}>Tube Well</option>
+                                <option ${farmer.farmDetails.irrigationType === 'drip' && 'selected'}>Drip Irrigation</option>
+                            </select>
+                        </td>
+                        <td class="p-3 border">
+                            <button onclick="saveFarmer('${farmer.uid}')" 
+                                    class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                                Save
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        window.saveFarmer = async (uid) => {
+            const row = document.querySelector(`tr[data-uid="${uid}"]`);
+            const fields = row.querySelectorAll('input, select');
+            
+            const updatedData = {
+                name: fields[0].value,
+                mobile: fields[1].value,
+                farmDetails: {
+                    farmType: fields[2].value.toLowerCase().replace(' ', '-'),
+                    landSize: parseFloat(fields[3].value),
+                    irrigationType: fields[4].value.toLowerCase().replace(' ', '-')
+                }
+            };
+
+            try {
+                await updateDoc(doc(db, "farmer_register", uid), updatedData);
+                alert('Farmer updated successfully!');
+                loadFarmers();
+            } catch (error) {
+                alert('Error updating farmer: ' + error.message);
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', loadFarmers);
+    </script>
+    <style>
+        .glass-table {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(203, 213, 225, 0.3);
+        }
+        .metric-card {
+            background: linear-gradient(145deg, #ffffff, #f1f5f9);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="min-h-screen p-8 bg-gray-50">
+    <div class="max-w-7xl mx-auto space-y-8">
+        <!-- Farmer Count -->
+        <div class="metric-card p-6 max-w-xs mx-auto">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-600">Total Farmers</h3>
+                    <p class="text-2xl font-bold text-gray-800" id="farmerCount">0</p>
+                </div>
+                <i class="fas fa-tractor text-3xl text-green-500"></i>
+            </div>
+        </div>
+
+        <!-- Farmers Table -->
+        <div class="glass-table rounded-xl shadow-lg overflow-hidden">
+            <div class="p-4 bg-white border-b">
+                <h2 class="text-xl font-bold text-gray-800">Farmers Database</h2>
+            </div>
+            <table id="farmerTable" class="w-full">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="p-3 text-left text-sm font-semibold text-gray-700">Name</th>
+                        <th class="p-3 text-left text-sm font-semibold text-gray-700">Mobile</th>
+                        <th class="p-3 text-left text-sm font-semibold text-gray-700">Farm Type</th>
+                        <th class="p-3 text-left text-sm font-semibold text-gray-700">Land Size</th>
+                        <th class="p-3 text-left text-sm font-semibold text-gray-700">Irrigation</th>
+                        <th class="p-3 text-left text-sm font-semibold text-gray-700">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    <!-- Farmer data -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

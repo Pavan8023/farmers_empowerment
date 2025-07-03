@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Krishi Bazaar - Farmers Marketplace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes fadeUp {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-up { animation: fadeUp 1s ease forwards; }
+    .fade-up-delayed { animation: fadeUp 1s ease forwards 0.5s; }
+    .fade-up-late { animation: fadeUp 1s ease forwards 1s; }
+
+    .agro-glow {
+      box-shadow: 0 0 20px rgba(56, 161, 105, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .agro-glow:hover {
+      box-shadow: 0 0 40px rgba(56, 161, 105, 0.5);
+      transform: scale(1.05);
+    }
+
+    .farm-gradient {
+      background: linear-gradient(135deg, #1a2d1a 0%, #0c290f 100%);
+    }
+  </style>
+</head>
+<body class="farm-gradient text-white min-h-screen flex items-center justify-center px-4">
+
+  <div class="text-center max-w-3xl fade-up">
+    <h1 class="text-5xl font-extrabold mb-4 text-green-300">Krishi Bazaar</h1>
+    <p class="text-lg text-green-200 mb-8 leading-relaxed fade-up-delayed">
+      Discover quality farm inputs, equipment, and training programs to boost your agricultural productivity.
+      Your success is our harvest!
+    </p>
+
+    <!-- Agricultural Products Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10 fade-up-late">
+      <!-- Organic Seeds Card -->
+      <div class="bg-green-800 p-6 rounded-xl hover:scale-105 transition-transform border border-green-600">
+        <div class="text-4xl mb-4 text-green-400">🌱</div>
+        <h3 class="text-xl font-bold mb-2">Premium Seeds</h3>
+        <p class="text-green-300 text-sm">
+          Certified organic seeds for cereals, vegetables, and cash crops with 95%+ germination rate
+        </p>
+      </div>
+
+      <!-- Farm Tools Card -->
+      <div class="bg-green-800 p-6 rounded-xl hover:scale-105 transition-transform border border-green-600">
+        <div class="text-4xl mb-4 text-green-400">🛠️</div>
+        <h3 class="text-xl font-bold mb-2">Smart Tools</h3>
+        <p class="text-green-300 text-sm">
+          Modern farming equipment and IoT devices for precision agriculture
+        </p>
+      </div>
+
+      <!-- Training Card -->
+      <div class="bg-green-800 p-6 rounded-xl hover:scale-105 transition-transform border border-green-600">
+        <div class="text-4xl mb-4 text-green-400">🎓</div>
+        <h3 class="text-xl font-bold mb-2">Agri Training</h3>
+        <p class="text-green-300 text-sm">
+          Expert-led courses on organic farming, market access, and crop management
+        </p>
+      </div>
+    </div>
+
+    <!-- CTA Button -->
+    <a href="/farmers/login.html" 
+       class="inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-10 rounded-full agro-glow text-lg transition">
+      Enter Agri-Mart
+    </a>
+  </div>
+
+</body>
+</html>

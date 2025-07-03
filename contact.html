@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contact Us - Farmers Empowerment</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- EmailJS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+  <style>
+    .glass {
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow: 0 8px 32px rgba(154, 205, 50, 0.1);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    #form-status {
+      font-weight: bold;
+    }
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0c290f, #2b6342, #243e24);
+      min-height: 100vh;
+    }
+    
+    .gradient-text {
+      background: linear-gradient(90deg, #8bc34a, #4caf50, #2e7d32);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: gradient 8s ease infinite;
+      background-size: 400% 400%;
+    }
+    
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    .glow {
+      box-shadow: 0 0 15px rgba(139, 195, 74, 0.5);
+    }
+    
+    .menu-open {
+      transform: translateX(0) scale(1);
+      opacity: 1;
+    }
+    .menu-closed {
+      transform: translateX(100%) scale(0.95);
+      opacity: 0;
+    }
+    .menu-transition {
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    
+    .floating {
+      animation: floating 6s ease-in-out infinite;
+    }
+    
+    @keyframes floating {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+      100% { transform: translateY(0px); }
+    }
+    
+    .btn-glow:hover {
+      box-shadow: 0 0 20px rgba(139, 195, 74, 0.6);
+      transform: translateY(-2px);
+    }
+    
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+    
+    .card-hover:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    .particle-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+    
+    .particle {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body class="text-white">
+
+  <!-- Particle Background -->
+  <div id="particle-bg" class="particle-bg"></div>
+
+  <!-- Navbar -->
+  <nav class="px-6 py-3 bg-gradient-to-r from-[#1A2D1A] to-[#162E16] shadow-lg sticky top-0 z-50 backdrop-blur-sm bg-opacity-80">
+    <div class="flex items-center justify-between max-w-7xl mx-auto">
+      <!-- Logo -->
+      <div class="flex items-center">
+        <span class="ml-2 text-xl font-bold gradiant-text hidden sm:block">Krishi Udaan</span>
+      </div>
+
+      <!-- Hamburger Icon -->
+      <div class="md:hidden">
+        <button id="menu-toggle" class="text-green-300 focus:outline-none transition-transform hover:scale-110">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2"
+               viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Desktop Menu -->
+      <ul class="hidden md:flex space-x-8 text-lg font-medium">
+        <li><a href="index.html" class="hover:text-green-300 transition-all duration-300 px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-10">Home</a></li>
+        <li><a onclick="showDashboard()" class="hover:text-green-300 transition-all duration-300 px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-10 cursor-pointer">Dashboard</a></li>
+        <li><a href="contact.html" class="hover:text-green-300 transition-all duration-300 px-3 py-2 rounded-lg hover:bg-white hover:bg-opacity-10">Contact</a></li>
+        <li><a href="log.html" class="bg-gradient-to-r from-green-600 to-emerald-500 px-6 py-2 rounded-full font-semibold hover:opacity-90 transition-all duration-300 btn-glow">Join Now</a></li>
+      </ul>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu"
+         class="fixed top-20 right-0 w-3/4 max-w-xs bg-[#1A2D1A] text-green-200 text-lg shadow-lg rounded-l-xl
+                flex flex-col space-y-4 p-6 md:hidden border-20 transform menu-closed menu-transition z-50 h-40 backdrop-blur-sm bg-opacity-90">
+      <a href="index.html" class="hover:text-emerald-400 transition-all duration-300 px-3 py-1 rounded">Home</a>
+      <a onclick="showDashboard()" class="hover:text-emerald-400 transition-all duration-300 px-3 py-1 rounded cursor-pointer">Dashboard</a>
+      <a href="log.html" class="hover:text-emerald-400 transition-all duration-300 px-3 py-1 rounded">Join Now</a>
+    </div>
+  </nav>
+
+  <!-- Contact Form -->
+  <div class="flex flex-col items-center justify-center w-full h-full px-4 mt-16">
+    <form id="contact_us-form" class="glass p-8 rounded-xl w-full max-w-md space-y-6">
+      <h2 class="text-3xl font-extrabold text-center text-white">🌱 Contact Krishi Udaan</h2>
+
+      <input
+        type="text"
+        name="from_name"
+        placeholder="Your Farm Name"
+        required
+        class="contact-input-name w-full p-3 rounded-lg bg-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+      />
+
+      <input
+        type="email"
+        name="from_email"
+        placeholder="Your Email"
+        required
+        class="contact-input-email w-full p-3 rounded-lg bg-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+      />
+
+      <select
+        name="subject"
+        class="contact-input-subject w-full p-3 rounded-lg bg-white/10 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        required
+      >
+        <option value="">Select Inquiry Type</option>
+        <option>Farming Assistance</option>
+        <option>Equipment Support</option>
+        <option>Crop Advisory</option>
+        <option>Market Access</option>
+        <option>Other</option>
+      </select>
+
+      <textarea
+        name="message"
+        rows="5"
+        placeholder="Your agricultural query..."
+        required
+        class="contact-input-message w-full p-3 rounded-lg bg-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+      ></textarea>
+
+      <button
+        type="submit"
+        class="contact-submit-btn w-full py-3 rounded-lg bg-gradient-to-r from-emerald-600 to-green-500 text-white font-bold hover:opacity-90 transition"
+      >
+        🌾 Send Message
+      </button>
+
+      <p id="form-status" class="text-center pt-2 text-green-400"></p>
+    </form>
+  </div>
+
+  <!-- EmailJS Integration -->
+  <script>
+    // Mobile menu toggle
+    const toggleBtn = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    let isMenuOpen = false;
+
+    toggleBtn.addEventListener('click', () => {
+      isMenuOpen = !isMenuOpen;
+      mobileMenu.classList.toggle('menu-open', isMenuOpen);
+      mobileMenu.classList.toggle('menu-closed', !isMenuOpen);
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 768) {
+        mobileMenu.classList.add('menu-closed');
+        mobileMenu.classList.remove('menu-open');
+        isMenuOpen = false;
+      }
+    });
+
+
+    // Dashboard function
+    function showDashboard() {
+      alert("Access is blocked until you register and login.");
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      emailjs.init("YOUR_EMAILJS_PUBLIC_KEY");
+
+      document.getElementById("contact_us-form").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const name = document.querySelector(".contact-input-name").value;
+        const email = document.querySelector(".contact-input-email").value;
+        const subject = document.querySelector(".contact-input-subject").value;
+        const message = document.querySelector(".contact-input-message").value;
+        const submitBtn = document.querySelector(".contact-submit-btn");
+        const status = document.getElementById("form-status");
+
+        submitBtn.textContent = "Sending...";
+        submitBtn.disabled = true;
+
+        emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+          from_name: name,
+          from_email: email,
+          subject: subject,
+          message: message,
+        }).then(
+          function () {
+            submitBtn.textContent = "🌾 Send Message";
+            submitBtn.disabled = false;
+            status.textContent = "✅ Message received! We'll cultivate your query shortly.";
+            status.classList.remove("text-red-400");
+            status.classList.add("text-green-400");
+            document.getElementById("contact_us-form").reset();
+          },
+          function (error) {
+            submitBtn.textContent = "🌾 Send Message";
+            submitBtn.disabled = false;
+            status.textContent = "❌ Message failed to send. Please try again after harvesting.";
+            status.classList.remove("text-green-400");
+            status.classList.add("text-red-400");
+            console.error("EmailJS Error:", error);
+          }
+        );
+      });
+    });
+  </script>
+</body>
+</html>

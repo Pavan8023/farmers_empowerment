@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login - Farmers Empowerment</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js"></script>
+    <script type="module" src="/js/login.js" defer></script>
+
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+      body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, #0c290f, #1a2d1a);
+        color: white;
+      }
+
+      .glass {
+        background: rgba(255, 255, 255, 0.05);
+        box-shadow: 0 8px 32px rgba(154, 205, 50, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+    </style>
+  </head>
+  <body class="min-h-screen flex flex-col items-center justify-start">
+
+    <!-- Navbar -->
+    <nav class="flex items-center justify-between px-6 py-3 bg-[#1A2D1A] shadow-md w-full">
+      <div class="flex items-center">
+        <!-- Logo -->
+      <div class="flex items-center">
+        <span class="ml-2 text-xl font-bold gradiant-text hidden sm:block">Krishi Udaan</span>
+      </div>
+      </div>
+      <ul class="flex space-x-6 text-lg font-semibold text-green-200">
+        <li><a href="index.html" class="hover:text-emerald-400 transition">Home</a></li>
+        <li><a onclick="showDashboard()" class="hover:text-emerald-400 transition">Dashboard</a></li>
+        <li><a href="register.html" class="hover:text-emerald-400 transition">Get Started</a></li>
+      </ul>
+    </nav>
+
+    <!-- Login Form -->
+    <div class="flex flex-col items-center justify-center w-full h-full px-4 mt-20">
+      <form id="loginForm" class="glass p-8 rounded-xl w-full max-w-md space-y-6">
+        <h2 class="text-3xl font-extrabold text-center text-white">Farmer Login</h2>
+
+        <input
+          type="email"
+          id="loginEmail"
+          placeholder="Email"
+          required
+          class="w-full p-3 rounded-lg bg-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        />
+
+        <div class="relative">
+          <input
+            type="password"
+            id="loginPassword"
+            placeholder="Password"
+            required
+            class="w-full p-3 rounded-lg bg-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 pr-10"
+          />
+          <button
+            type="button"
+            id="togglePassword"
+            class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-white"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          </button>
+        </div>
+
+        <button
+          type="submit"
+          class="w-full py-3 rounded-lg bg-gradient-to-r from-emerald-600 to-green-500 text-white font-bold hover:opacity-90 transition"
+        >
+          Sign In
+        </button>
+
+        <p class="text-sm text-center text-green-200">
+          New to Krishi Udaan?
+          <a href="register.html" class="text-emerald-400 hover:underline">Create Farmer Account</a>
+        </p>
+      </form>
+    </div>
+
+    <script>
+      document.getElementById('togglePassword').addEventListener('click', function() {
+        const passwordInput = document.getElementById('loginPassword');
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        
+        // Toggle eye icon
+        this.innerHTML = type === 'password' ? 
+          '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>' :
+          '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>';
+      });
+    </script>
+
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyBPFb8uxZ2mLyVmv2d8JFPcmyBChc9LjkE",
+        authDomain: "women-empwr.firebaseapp.com",
+        projectId: "women-empwr",
+        appId: "1:230261281865:web:a5ad656bd1de125eafdb98"
+      };
+
+      firebase.initializeApp(firebaseConfig);
+
+      function showDashboard() {
+        alert("Access is blocked until you register and login.");
+      }
+    </script>
+
+  </body>
+</html>

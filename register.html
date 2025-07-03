@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Farmer Registration - Krishi Udaan</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script type="module" src="/js/signup.js" defer></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0c290f, #1a2d1a);
+      color: white;
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow: 0 8px 32px rgba(154, 205, 50, 0.1);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-start">
+
+  <!-- Navbar -->
+  <nav class="flex items-center justify-between px-6 py-3 bg-[#1A2D1A] shadow-md w-full">
+    <div class="flex items-center">
+      <!-- Logo -->
+      <div class="flex items-center">
+        <span class="ml-2 text-xl font-bold gradiant-text hidden sm:block">Krishi Udaan</span>
+      </div>
+    </div>
+    <ul class="flex space-x-6 text-lg font-semibold text-green-200">
+      <li><a href="index.html" class="hover:text-emerald-400 transition">Home</a></li>
+      <li><a href="login.html" class="hover:text-emerald-400 transition">Login</a></li>
+    </ul>
+  </nav>
+
+  <!-- Signup Card -->
+  <div class="flex flex-col items-center justify-center w-full h-full px-4 mt-10 mb-10">
+    <div class="glass p-8 rounded-xl w-full max-w-md space-y-6">
+      <h2 class="text-3xl font-extrabold text-center text-white">Farmer Registration</h2>
+
+      <!-- Select Registration Type -->
+      <div>
+        <label class="block text-sm font-semibold mb-2 text-white">Select Registration Type</label>
+        <select id="signupType" class="w-full p-3 rounded-lg bg-white/10 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+          <option value="agri-entrepreneur">Agri Entrepreneur</option>
+          <option value="farmer">Farmer</option>
+        </select>
+      </div>
+
+      <!-- Agri Entrepreneur Form -->
+      <form id="agriForm" class="signupForm space-y-4">
+        <input type="hidden" value="agri-entrepreneur" />
+
+        <input type="text" id="farmName" placeholder="Farm/Business Name" class="w-full p-3 rounded-lg bg-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" required />
+        <input type="email" id="agriEmail" placeholder="Email Address" class="w-full p-3 rounded-lg bg-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" required />
+        <input type="password" id="agriPassword" placeholder="Create Password" class="w-full p-3 rounded-lg bg-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" required />
+        <input type="password" id="agriConfirmPassword" placeholder="Confirm Password" class="w-full p-3 rounded-lg bg-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" required />
+        
+        <select id="businessType" class="w-full p-3 rounded-lg bg-white/10 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500" required>
+          <option>Organic Produce</option>
+          <option>Farm Equipment</option>
+          <option>Seed Supplier</option>
+          <option>Agri Tech</option>
+        </select>
+
+        <input type="text" id="location" placeholder="Business Location" class="w-full p-3 rounded-lg bg-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" required />
+
+        <button type="submit" class="w-full py-3 rounded-lg bg-gradient-to-r from-emerald-600 to-green-500 text-white font-bold hover:opacity-90 transition">
+          Register as Agri Entrepreneur
+        </button>
+      </form>
+
+      <!-- Farmer Form -->
+      <form id="farmerForm" class="signupForm hidden space-y-4">
+        <input type="hidden" value="farmer" />
+
+        <input type="text" id="farmerName" placeholder="Full Name" class="w-full p-3 rounded-lg bg-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" required />
+        <input type="email" id="farmerEmail" placeholder="Email Address" class="w-full p-3 rounded-lg bg-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" required />
+        <input type="password" id="farmerPassword" placeholder="Create Password" class="w-full p-3 rounded-lg bg-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" required />
+        <input type="password" id="farmerConfirmPassword" placeholder="Confirm Password" class="w-full p-3 rounded-lg bg-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" required />
+        
+        <div class="grid grid-cols-2 gap-4">
+          <input type="number" id="landSize" placeholder="Land Size (acres)" class="w-full p-3 rounded-lg bg-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500" required />
+          <select id="irrigationType" class="w-full p-3 rounded-lg bg-white/10 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500" required>
+            <option>Rain-fed</option>
+            <option>Tube Well</option>
+            <option>Canal</option>
+            <option>Drip Irrigation</option>
+          </select>
+        </div>
+
+        <select id="primaryCrop" class="w-full p-3 rounded-lg bg-white/10 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500" required>
+          <option>Wheat</option>
+          <option>Rice</option>
+          <option>Cotton</option>
+          <option>Vegetables</option>
+          <option>Fruits</option>
+        </select>
+
+        <button type="submit" class="w-full py-3 rounded-lg bg-gradient-to-r from-green-600 to-emerald-500 text-white font-bold hover:opacity-90 transition">
+          Register as Farmer
+        </button>
+      </form>
+
+      <p class="text-sm text-center text-green-200">
+        Already have an account?
+        <a href="log.html" class="text-emerald-400 hover:underline">Login here</a>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const signupType = document.getElementById('signupType');
+      const agriForm = document.getElementById('agriForm');
+      const farmerForm = document.getElementById('farmerForm');
+
+      signupType.addEventListener('change', () => {
+        if (signupType.value === 'agri-entrepreneur') {
+          agriForm.classList.remove('hidden');
+          farmerForm.classList.add('hidden');
+        } else {
+          farmerForm.classList.remove('hidden');
+          agriForm.classList.add('hidden');
+        }
+      });
+    });
+  </script>
+  <script>
+    import { auth, db } from './firebase-config.js';
+import { sendPasswordResetEmail, confirmPasswordReset, verifyPasswordResetCode } from 'firebase/auth';
+import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+
+// Generate random 6-digit OTP
+const generateOTP = () => Math.floor(100000 + Math.random() * 900000);
+
+// Store OTP in Firestore with expiration
+async function storeOTP(email, otp) {
+  const otpData = {
+    otp,
+    expiresAt: new Date(Date.now() + 15*60000), // 15 minutes expiration
+    email
+  };
+  
+  await setDoc(doc(db, 'passwordResets', email), otpData);
+}
+
+// Send OTP to email
+async function sendOTP() {
+  const email = document.getElementById('resetEmail').value;
+  const otp = generateOTP();
+  
+  try {
+    // Check if email exists
+    const userDoc = await getDoc(doc(db, 'farmers', email));
+    if (!userDoc.exists()) throw new Error('Email not registered');
+
+    await storeOTP(email, otp);
+    
+    // Send email with OTP (you'll need a backend service for this)
+    await fetch('your-email-service-endpoint', {
+      method: 'POST',
+      body: JSON.stringify({ email, otp })
+    });
+    
+    document.getElementById('otpStep1').classList.add('hidden');
+    document.getElementById('otpStep2').classList.remove('hidden');
+  } catch (error) {
+    alert(error.message);
+  }
+}
+
+// Verify OTP and reset password
+async function verifyOTPAndReset() {
+  const email = document.getElementById('resetEmail').value;
+  const otp = document.getElementById('enteredOTP').value;
+  const newPassword = document.getElementById('newPassword').value;
+
+  try {
+    const otpDoc = await getDoc(doc(db, 'passwordResets', email));
+    const otpData = otpDoc.data();
+    
+    if (!otpDoc.exists() || otpData.otp !== otp) {
+      throw new Error('Invalid OTP');
+    }
+    
+    if (new Date() > new Date(otpData.expiresAt)) {
+      throw new Error('OTP expired');
+    }
+    
+    // Update password in Firebase Authentication
+    await sendPasswordResetEmail(auth, email);
+    
+    // Update password in Firestore (if you store it there)
+    const userDocRef = doc(db, 'farmers', email);
+    await updateDoc(userDocRef, {
+      pin: newPassword // Only if you store password in Firestore (not recommended)
+    });
+    
+    alert('Password updated successfully!');
+    closeModal();
+  } catch (error) {
+    alert(error.message);
+  }
+}
+
+// Modal controls
+function showForgotPassword() {
+  document.getElementById('forgotPasswordModal').classList.remove('hidden');
+}
+
+function closeModal() {
+  document.getElementById('forgotPasswordModal').classList.add('hidden');
+}
+  </script>
+</body>
+</html>

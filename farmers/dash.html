@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Krishi Mitra - Farmer Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-slide-in { animation: slideIn 0.5s ease-out; }
+    .agro-gradient { background: linear-gradient(135deg, #1a2d1a 0%, #0c290f 100%); }
+    .agro-glow { transition: all 0.3s ease; }
+    .agro-glow:hover { box-shadow: 0 0 20px rgba(56, 161, 105, 0.3); }
+  </style>
+</head>
+<body class="agro-gradient text-gray-100 min-h-screen">
+  <header class="bg-green-800 border-b border-green-700 py-4 animate-slide-in">
+    <div class="max-w-6xl mx-auto flex justify-between items-center px-4">
+      <h1 class="text-2xl font-bold text-green-300">Krishi<span class="text-orange-400">Mitra</span></h1>
+      <div class="flex gap-4">
+        <button id="logout-btn" class="text-sm text-green-300 hover:text-orange-400 transition">
+          <i class="fas fa-sign-out-alt mr-2"></i>Logout
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto py-10 px-4 space-y-8">
+    <!-- Profile Section -->
+    <div class="bg-green-900/50 p-6 rounded-xl shadow-lg backdrop-blur-sm animate-slide-in">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="col-span-2">
+          <h2 class="text-xl font-semibold mb-4 text-green-300">Farmer Profile</h2>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <p class="text-sm text-green-400">Farm Name</p>
+              <p class="text-gray-200 font-medium" id="farm-name">-</p>
+            </div>
+            <div>
+              <p class="text-sm text-green-400">irrigation-type</p>
+              <p class="text-gray-200 font-medium" id="farm-location">-</p>
+            </div>
+            <div>
+              <p class="text-sm text-green-400">Total Land</p>
+              <p class="text-gray-200 font-medium" id="farm-size">-</p>
+            </div>
+            <div>
+              <p class="text-sm text-green-400">Main Crop</p>
+              <p class="text-gray-200 font-medium" id="main-crop">-</p>
+            </div>
+          </div>
+        </div>
+        <div class="bg-green-800/30 p-4 rounded-lg">
+          <h3 class="text-lg font-semibold mb-3 text-green-300">Quick Stats</h3>
+          <div class="space-y-3">
+            <div>
+              <p class="text-sm text-green-400">This Month's Orders</p>
+              <p class="text-2xl font-bold text-orange-400" id="month-orders">0</p>
+            </div>
+            <div>
+              <p class="text-sm text-green-400">Total Products</p>
+              <p class="text-2xl font-bold text-orange-400" id="total-products">0</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Crop Management -->
+    <div class="bg-green-900/50 p-6 rounded-xl shadow-lg backdrop-blur-sm animate-slide-in">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-semibold text-green-300">Your Crops</h2>
+        <button id="add-crop-btn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md agro-glow">
+          <i class="fas fa-seedling mr-2"></i>Add New Crop
+        </button>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="crops-list">
+        <!-- Crops will be loaded here -->
+      </div>
+    </div>
+
+    <!-- Crop Modal -->
+    <div id="crop-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 backdrop-blur-sm">
+      <div class="bg-green-900/90 p-6 rounded-xl shadow-2xl w-full max-w-2xl backdrop-blur-lg border border-green-700">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-xl font-semibold text-green-300" id="modal-title">Add New Crop</h3>
+          <button id="close-modal" class="text-green-400 hover:text-green-300">
+            <i class="fas fa-times text-lg"></i>
+          </button>
+        </div>
+        <form id="crop-form" class="space-y-6">
+          <input type="hidden" id="crop-id">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-medium text-green-400 mb-2">Crop Name</label>
+              <input type="text" id="crop-name" required 
+                     class="w-full px-4 py-2 bg-green-800/30 border border-green-700 rounded-md text-green-100 
+                            focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-green-400 mb-2">Price per Kg (₹)</label>
+              <input type="number" id="crop-price" step="0.1" required 
+                     class="w-full px-4 py-2 bg-green-800/30 border border-green-700 rounded-md text-green-100 
+                            focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-green-400 mb-2">Category</label>
+              <select id="crop-category" required 
+                      class="w-full px-4 py-2 bg-green-800/30 border border-green-700 rounded-md text-green-100 
+                             focus:outline-none focus:ring-2 focus:ring-green-500">
+                <option value="">Select Category</option>
+                <option value="grains">Grains</option>
+                <option value="vegetables">Vegetables</option>
+                <option value="fruits">Fruits</option>
+                <option value="spices">Spices</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-green-400 mb-2">Stock (kg)</label>
+              <input type="number" id="crop-stock" required 
+                     class="w-full px-4 py-2 bg-green-800/30 border border-green-700 rounded-md text-green-100 
+                            focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-green-400 mb-2">Crop Description</label>
+            <textarea id="crop-description" rows="3" 
+                      class="w-full px-4 py-2 bg-green-800/30 border border-green-700 rounded-md text-green-100 
+                             focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
+          </div>
+          <div class="flex justify-end space-x-4">
+            <button type="button" id="cancel-crop" 
+                    class="px-4 py-2 text-green-400 hover:text-green-300 transition">
+              Cancel
+            </button>
+            <button type="submit" 
+                    class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md transition agro-glow">
+              Save Crop
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, updateDoc, arrayUnion } 
+           from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCeLlMI71qya0Ij1t14xp9lqRPoHEdDkNY",
+            authDomain: "farmers-5d7eb.firebaseapp.com",
+            projectId: "farmers-5d7eb",
+            storageBucket: "farmers-5d7eb.firebasestorage.app",
+            messagingSenderId: "653225733546",
+            appId: "1:653225733546:web:10b1220d5a00030aca8fd3",
+            measurementId: "G-KHL7Z6SJQX"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Auth state listener
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      try {
+        const docRef = doc(db, "farmer_register", user.uid);
+        const docSnap = await getDoc(docRef);
+        
+        if (!docSnap.exists()) {
+          await signOut(auth);
+          alert("Farmer profile not found!");
+          window.location.href = 'login.html';
+          return;
+        }
+
+        const farmerData = docSnap.data();
+        populateProfile(farmerData);
+        renderCrops(farmerData.farmDetails?.crops || []);
+        initializeEventListeners();
+      } catch (error) {
+        console.error("Error loading data:", error);
+        alert("Error loading farmer data");
+        signOutUser();
+      }
+    });
+
+    function populateProfile(data) {
+      document.getElementById('farm-name').textContent = data.farmDetails?.farmType || '-';
+      document.getElementById('farm-location').textContent = data.farmDetails?.irrigationType || '-';
+      document.getElementById('farm-size').textContent = data.farmDetails?.landSize ? 
+        `${data.farmDetails.landSize} acres` : '-';
+      document.getElementById('main-crop').textContent = data.farmDetails?.crops?.[0]?.name || '-';
+      document.getElementById('total-products').textContent = data.farmDetails?.crops?.length || 0;
+      document.getElementById('month-orders').textContent = data.farmDetails?.crops?.length || 0;
+    }
+
+    async function renderCrops(crops) {
+      const container = document.getElementById('crops-list');
+      container.innerHTML = '';
+      
+      crops.forEach(crop => {
+        const cropCard = document.createElement('div');
+        cropCard.className = 'p-4 bg-green-800/30 rounded-lg hover:bg-green-800/40 transition agro-glow';
+        cropCard.innerHTML = `
+          <div class="flex justify-between items-start">
+            <div>
+              <h3 class="font-semibold text-green-300">${crop}</h3>
+              <p class="text-sm text-green-400">Primary Crop</p>
+            </div>
+          </div>
+        `;
+        container.appendChild(cropCard);
+      });
+    }
+
+    async function saveCrop(e) {
+      e.preventDefault();
+      
+      const cropData = {
+        name: document.getElementById('crop-name').value,
+        price: parseFloat(document.getElementById('crop-price').value),
+        category: document.getElementById('crop-category').value,
+        stock: parseInt(document.getElementById('crop-stock').value),
+        description: document.getElementById('crop-description').value
+      };
+
+      try {
+        const user = auth.currentUser;
+        const docRef = doc(db, "farmer_register", user.uid);
+        
+        await updateDoc(docRef, {
+          'farmDetails.crops': arrayUnion(cropData.name)
+        });
+        
+        closeCropModal();
+        const docSnap = await getDoc(docRef);
+        renderCrops(docSnap.data().farmDetails.crops);
+      } catch (error) {
+        alert("Error saving crop: " + error.message);
+      }
+    }
+
+    function openCropModal() {
+      document.getElementById('crop-modal').classList.remove('hidden');
+      document.getElementById('crop-modal').classList.add('flex');
+    }
+
+    function closeCropModal() {
+      document.getElementById('crop-modal').classList.add('hidden');
+      document.getElementById('crop-form').reset();
+    }
+
+    async function signOutUser() {
+      try {
+        await signOut(auth);
+        window.location.href = 'login.html';
+      } catch (error) {
+        console.error("Logout error:", error);
+      }
+    }
+
+    function initializeEventListeners() {
+      document.getElementById('logout-btn').addEventListener('click', signOutUser);
+      document.getElementById('add-crop-btn').addEventListener('click', openCropModal);
+      document.getElementById('close-modal').addEventListener('click', closeCropModal);
+      document.getElementById('cancel-crop').addEventListener('click', closeCropModal);
+      document.getElementById('crop-form').addEventListener('submit', saveCrop);
+    }
+  </script>
+</body>
+</html>

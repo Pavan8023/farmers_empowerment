@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Krishi Udaan - Farmer Registration</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    @keyframes gradient-x {
+      0% { background-position: 0% 50% }
+      50% { background-position: 100% 50% }
+      100% { background-position: 0% 50% }
+    }
+    .animate-gradient-x {
+      background-size: 200% 200%;
+      animation: gradient-x 3s ease infinite;
+    }
+    .farm-glass {
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow: 0 8px 32px rgba(56, 161, 105, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .fade-in {
+      animation: fadeIn 1.5s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-green-900 to-green-800 text-gray-100 min-h-screen">
+  <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 fade-in">
+    <div class="max-w-md w-full space-y-8 farm-glass p-10 rounded-xl">
+      <div>
+        <h1 class="text-center text-4xl font-extrabold mb-8">
+          <span class="bg-gradient-to-r from-green-400 via-green-500 to-green-600 bg-clip-text text-transparent animate-gradient-x">
+            Krishi<span class="text-white">Udaan</span>
+          </span>
+          <span class="block mt-2 h-1 w-20 mx-auto bg-gradient-to-r from-green-400 to-green-600 rounded-full"></span>
+        </h1>
+        <h2 class="mt-6 text-center text-2xl font-semibold text-green-200">
+          Farmer Registration
+        </h2>
+        <p class="mt-2 text-center text-sm text-green-300">
+          Already registered? 
+          <a href="/farmers/login.html" class="font-medium text-white hover:text-green-300">
+            Login here
+          </a>
+        </p>
+      </div>
+      <form id="register-form" class="mt-8 space-y-6">
+        <div class="rounded-md shadow-sm -space-y-px">
+          <div>
+            <label for="name" class="sr-only">Full Name</label>
+            <input id="name" name="name" type="text" required 
+                   class="appearance-none rounded-none relative block w-full px-3 py-2 border border-green-600 bg-green-900 placeholder-green-300 text-white rounded-t-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" 
+                   placeholder="Farmer's Name">
+          </div>
+          <div>
+            <label for="mobile" class="sr-only">Mobile Number</label>
+            <input id="mobile" name="mobile" type="tel" 
+                   required pattern="\+[0-9]{11,15}"
+                   class="appearance-none rounded-none relative block w-full px-3 py-2 border border-green-600 bg-green-900 placeholder-green-300 text-white focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" 
+                   placeholder="+91XXXXXXXXXX">
+          </div>
+          <div>
+            <label for="password" class="sr-only">PIN</label>
+            <input id="password" name="password" type="password" 
+                   required minlength="6" maxlength="6" pattern="\d{6}"
+                   class="appearance-none rounded-none relative block w-full px-3 py-2 border border-green-600 bg-green-900 placeholder-green-300 text-white focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" 
+                   placeholder="Create 6-digit PIN">
+          </div>
+          <div>
+            <label for="confirm-password" class="sr-only">Confirm PIN</label>
+            <input id="confirm-password" name="confirm-password" type="password" 
+                   required minlength="6" maxlength="6" pattern="\d{6}"
+                   class="appearance-none rounded-none relative block w-full px-3 py-2 border border-green-600 bg-green-900 placeholder-green-300 text-white rounded-b-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" 
+                   placeholder="Confirm PIN">
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div class="flex items-center">
+            <input id="is-supplier" name="is-supplier" type="checkbox" 
+                   class="h-4 w-4 text-green-500 focus:ring-green-500 border-green-600 rounded bg-green-800">
+            <label for="is-supplier" class="ml-2 block text-sm text-green-300">
+              Register as Agri-Supplier (seeds/equipment)
+            </label>
+          </div>
+
+          <div id="farmer-fields" class="space-y-4">
+            <div>
+              <label for="farm-type" class="block text-sm font-medium text-green-200">Farm Type</label>
+              <select id="farm-type" class="mt-1 w-full px-3 py-2 border border-green-600 bg-green-900 text-white rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm">
+                <option value="individual">Individual Farmer</option>
+                <option value="cooperative">Cooperative Farm</option>
+                <option value="organic">Organic Farm</option>
+                <option value="horticulture">Horticulture</option>
+              </select>
+            </div>
+            <div>
+              <label for="land-size" class="block text-sm font-medium text-green-200">Land Size (acres)</label>
+              <input type="number" id="land-size" 
+                     class="mt-1 w-full px-3 py-2 border border-green-600 bg-green-900 placeholder-green-300 text-white rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm">
+            </div>
+            <div>
+              <label for="irrigation-type" class="block text-sm font-medium text-green-200">Irrigation Type</label>
+              <select id="irrigation-type" class="mt-1 w-full px-3 py-2 border border-green-600 bg-green-900 text-white rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm">
+                <option value="rainfed">Rain-fed</option>
+                <option value="canal">Canal</option>
+                <option value="tubewell">Tube Well</option>
+                <option value="drip">Drip Irrigation</option>
+              </select>
+            </div>
+            <div>
+              <label for="primary-crop" class="block text-sm font-medium text-green-200">Primary Crops</label>
+              <div class="mt-1 grid grid-cols-2 gap-2">
+                <label class="inline-flex items-center">
+                  <input type="checkbox" name="crops" value="wheat" class="text-green-500 border-green-600">
+                  <span class="ml-2 text-green-300">Wheat</span>
+                </label>
+                <label class="inline-flex items-center">
+                  <input type="checkbox" name="crops" value="rice" class="text-green-500 border-green-600">
+                  <span class="ml-2 text-green-300">Rice</span>
+                </label>
+                <label class="inline-flex items-center">
+                  <input type="checkbox" name="crops" value="vegetables" class="text-green-500 border-green-600">
+                  <span class="ml-2 text-green-300">Vegetables</span>
+                </label>
+                <label class="inline-flex items-center">
+                  <input type="checkbox" name="crops" value="fruits" class="text-green-500 border-green-600">
+                  <span class="ml-2 text-green-300">Fruits</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div id="supplier-fields" class="hidden space-y-4">
+            <div>
+              <label for="supply-type" class="block text-sm font-medium text-green-200">Supply Category</label>
+              <select id="supply-type" class="mt-1 w-full px-3 py-2 border border-green-600 bg-green-900 text-white rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm">
+                <option value="seeds">Seeds</option>
+                <option value="equipment">Farming Equipment</option>
+                <option value="fertilizers">Fertilizers</option>
+                <option value="pesticides">Organic Pesticides</option>
+              </select>
+            </div>
+            <div>
+              <label for="service-area" class="block text-sm font-medium text-green-200">Service Area</label>
+              <input type="text" id="service-area" 
+                     class="mt-1 w-full px-3 py-2 border border-green-600 bg-green-900 placeholder-green-300 text-white rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" 
+                     placeholder="Districts covered">
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <button type="submit" class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition transform hover:scale-105 shadow-lg shadow-green-500/20">
+            <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+              <i class="fas fa-tractor text-green-200 group-hover:text-white"></i>
+            </span>
+            Register Farm
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { 
+      getAuth, 
+      createUserWithEmailAndPassword,
+      signOut,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { 
+      getFirestore, 
+      doc, 
+      setDoc,
+      getDoc,
+      updateDoc,
+      arrayUnion,
+      arrayRemove
+    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCeLlMI71qya0Ij1t14xp9lqRPoHEdDkNY",
+      authDomain: "farmers-5d7eb.firebaseapp.com",
+      projectId: "farmers-5d7eb",
+      storageBucket: "farmers-5d7eb.firebasestorage.app",
+      messagingSenderId: "653225733546",
+      appId: "1:653225733546:web:10b1220d5a00030aca8fd3",
+      measurementId: "G-KHL7Z6SJQX"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Registration System
+    const registerForm = document.getElementById('register-form');
+    const isSupplierCheckbox = document.getElementById('is-supplier');
+
+    if (registerForm) {
+      isSupplierCheckbox.addEventListener('change', (e) => {
+        document.getElementById('farmer-fields').classList.toggle('hidden', e.target.checked);
+        document.getElementById('supplier-fields').classList.toggle('hidden', !e.target.checked);
+      });
+
+      registerForm.addEventListener('submit', handleRegistration);
+    }
+
+    // Dashboard System
+    if (window.location.pathname.includes('dash.html')) {
+      onAuthStateChanged(auth, handleAuthState);
+    }
+
+    async function handleRegistration(e) {
+      e.preventDefault();
+
+      const formData = {
+        name: registerForm.name.value.trim(),
+        mobile: registerForm.mobile.value.trim(),
+        pin: registerForm.password.value.trim(),
+        confirmPin: registerForm['confirm-password'].value.trim(),
+        isSupplier: isSupplierCheckbox.checked,
+        farmType: registerForm['farm-type'].value,
+        landSize: registerForm['land-size'].value,
+        irrigationType: registerForm['irrigation-type'].value,
+        crops: Array.from(registerForm.querySelectorAll('input[name="crops"]:checked'))
+                  .map(cb => ({
+                    id: cb.value.toLowerCase().replace(/\s+/g, '-'),
+                    name: cb.value,
+                    status: 'planned',
+                    addedAt: new Date().toISOString(),
+                    plantingDate: null,
+                    harvestDate: null,
+                    notes: ''
+                  })),
+        supplyType: registerForm['supply-type'].value,
+        serviceArea: registerForm['service-area'].value.split(',').map(s => s.trim())
+      };
+
+      try {
+        validateRegistration(formData);
+        const email = `${formData.mobile}@krishiudaan.in`;
+        const userCredential = await createUserWithEmailAndPassword(auth, email, formData.pin);
+        
+        const userData = createUserData(formData, userCredential);
+        const collectionName = formData.isSupplier ? 'market_register' : 'farmer_register';
+        
+        await setDoc(doc(db, collectionName, userCredential.user.uid), userData);
+        alert('Registration successful!');
+        window.location.href = formData.isSupplier ? 'supplier-dashboard.html' : 'login.html';
+      } catch (error) {
+        handleRegistrationError(error);
+      }
+    }
+
+    async function handleAuthState(user) {
+      if (!user) redirectToLogin();
+      
+      try {
+        const docRef = doc(db, "farmer_register", user.uid);
+        const docSnap = await getDoc(docRef);
+        
+        if (!docSnap.exists() || docSnap.data().accountType !== 'farmer') {
+          await signOut(auth);
+          alert("Farmer profile not found!");
+          redirectToLogin();
+        }
+
+        initializeDashboard(docSnap.data());
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Error loading farmer data");
+        signOutUser();
+      }
+    }
+
+    function initializeDashboard(farmerData) {
+      populateProfile(farmerData);
+      loadCrops(farmerData.farmDetails?.crops || []);
+      setupDashboardListeners();
+    }
+
+    function populateProfile(data) {
+      document.getElementById('farm-name').textContent = data.name || 'Not set';
+      document.getElementById('farm-village').textContent = data.farmDetails?.village || 'Not set';
+      document.getElementById('farm-contact').textContent = data.mobile || 'Not set';
+      document.getElementById('total-land').textContent = `${data.farmDetails?.landSize || 0} acres`;
+      document.getElementById('active-crops').textContent = data.farmDetails?.crops?.length || 0;
+    }
+
+    // Crop Management Functions
+    function loadCrops(crops) {
+      const tbody = document.getElementById('crops-table');
+      tbody.innerHTML = crops.length ? 
+        crops.map(createCropRow).join('') : 
+        `<tr><td colspan="5" class="text-center py-8">No active crops found</td></tr>`;
+    }
+
+    function createCropRow(crop) {
+      return `
+        <tr class="border-b border-earth-brown/20 hover:bg-earth-brown/10">
+          <td class="py-4">${crop.name}</td>
+          <td class="py-4">${new Date(crop.plantDate).toLocaleDateString()}</td>
+          <td class="py-4">${new Date(crop.harvestDate).toLocaleDateString()}</td>
+          <td class="py-4">
+            <span class="px-2 py-1 rounded-full text-xs ${getStatusClass(crop.status)}">
+              ${crop.status}
+            </span>
+          </td>
+          <td class="py-4">
+            <button class="text-earth-brown hover:text-crop-yellow mr-2" onclick="editCrop('${crop.id}')">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="text-red-600 hover:text-red-400" onclick="deleteCrop('${crop.id}')">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      `;
+    }
+
+    window.editCrop = async (cropId) => {
+      const user = auth.currentUser;
+      const docSnap = await getDoc(doc(db, "farmer_register", user.uid));
+      const crop = docSnap.data().farmDetails.crops.find(c => c.id === cropId);
+      
+      if (crop) {
+        document.getElementById('crop-id').value = crop.id;
+        document.getElementById('crop-name').value = crop.name;
+        document.getElementById('plant-date').value = crop.plantDate.split('T')[0];
+        document.getElementById('harvest-date').value = crop.harvestDate.split('T')[0];
+        document.getElementById('crop-notes').value = crop.notes;
+        document.getElementById('modal-title').textContent = 'Edit Crop';
+        document.getElementById('crop-modal').classList.remove('hidden');
+      }
+    };
+
+    window.deleteCrop = async (cropId) => {
+      if (confirm('Delete this crop permanently?')) {
+        const user = auth.currentUser;
+        const docRef = doc(db, "farmer_register", user.uid);
+        const docSnap = await getDoc(docRef);
+        
+        const updatedCrops = docSnap.data().farmDetails.crops.filter(c => c.id !== cropId);
+        await updateDoc(docRef, { 'farmDetails.crops': updatedCrops });
+        loadCrops(updatedCrops);
+      }
+    };
+
+    // Helper Functions
+    function setupDashboardListeners() {
+      document.getElementById('logout-btn').addEventListener('click', signOutUser);
+      document.getElementById('add-crop-btn').addEventListener('click', showCropModal);
+      document.getElementById('crop-form').addEventListener('submit', saveCrop);
+      document.querySelectorAll('.close-modal').forEach(btn => 
+        btn.addEventListener('click', closeCropModal));
+    }
+
+    async function saveCrop(e) {
+      e.preventDefault();
+      
+      const cropData = {
+        id: document.getElementById('crop-id').value || Date.now().toString(),
+        name: document.getElementById('crop-name').value,
+        plantDate: document.getElementById('plant-date').value,
+        harvestDate: document.getElementById('harvest-date').value,
+        notes: document.getElementById('crop-notes').value,
+        status: 'planted',
+        createdAt: new Date().toISOString()
+      };
+
+      try {
+        const user = auth.currentUser;
+        const docRef = doc(db, "farmer_register", user.uid);
+        
+        await updateDoc(docRef, {
+          'farmDetails.crops': arrayUnion(cropData)
+        });
+
+        closeCropModal();
+        const docSnap = await getDoc(docRef);
+        loadCrops(docSnap.data().farmDetails.crops);
+      } catch (error) {
+        alert("Error saving crop: " + error.message);
+      }
+    }
+
+    function closeCropModal() {
+      document.getElementById('crop-modal').classList.add('hidden');
+      document.getElementById('crop-form').reset();
+    }
+
+    function signOutUser() {
+      signOut(auth).then(() => window.location.href = 'login.html');
+    }
+
+    function redirectToLogin() {
+      window.location.href = 'login.html';
+    }
+
+    function getStatusClass(status) {
+      const statusClasses = {
+        'planted': 'bg-blue-500',
+        'growing': 'bg-green-500',
+        'harvest-ready': 'bg-crop-yellow text-farm-green',
+        'default': 'bg-gray-500'
+      };
+      return statusClasses[status] || statusClasses.default;
+    }
+
+    function validateRegistration(formData) {
+      if (!formData.mobile.startsWith('+')) throw new Error('Mobile number must start with country code');
+      if (formData.pin.length !== 6 || !/^\d+$/.test(formData.pin)) throw new Error('PIN must be 6 digits');
+      if (formData.pin !== formData.confirmPin) throw new Error('PINs do not match');
+    }
+
+    function createUserData(formData, userCredential) {
+      return {
+        uid: userCredential.user.uid,
+        name: formData.name,
+        mobile: formData.mobile,
+        accountType: formData.isSupplier ? 'supplier' : 'farmer',
+        createdAt: new Date().toISOString(),
+        lastUpdated: new Date().toISOString(),
+        ...(formData.isSupplier ? {
+          supplierDetails: {
+            supplyType: formData.supplyType,
+            serviceAreas: formData.serviceArea,
+            verificationStatus: 'pending'
+          }
+        } : {
+          farmDetails: {
+            farmType: formData.farmType,
+            landSize: parseFloat(formData.landSize),
+            irrigationType: formData.irrigationType,
+            crops: formData.crops, // Now storing structured crop data
+            certification: 'none'
+          }
+        })
+      };
+    }
+
+    function handleRegistrationError(error) {
+      const errorMap = {
+        'auth/email-already-in-use': 'Mobile number already registered',
+        'auth/weak-password': 'PIN must be at least 6 digits',
+        'auth/invalid-email': 'Invalid mobile number format'
+      };
+      alert(`Registration failed: ${errorMap[error.code] || error.message}`);
+    }
+</script>
+</body>
+</html>

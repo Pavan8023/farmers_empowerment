@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Krishi Mitra - Supplier Hub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            'supply-green': '#1a3d1a',
+            'equipment-gray': '#4a5568',
+            'revenue-gold': '#d4af37'
+          },
+          animation: {
+            'supply-glow': 'supply-glow 2s ease-in-out infinite',
+            'delivery-float': 'delivery-float 3s ease-in-out infinite'
+          },
+          keyframes: {
+            'supply-glow': {
+              '0%, 100%': { 'box-shadow': '0 0 10px rgba(72, 187, 120, 0.3)' },
+              '50%': { 'box-shadow': '0 0 20px rgba(72, 187, 120, 0.6)' }
+            },
+            'delivery-float': {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-10px)' }
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+/* Optional styling */
+.pdf-btn {
+  padding: 10px 20px;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 20px;
+}
+</style>
+</head>
+<body class="dark bg-gradient-to-br from-supply-green to-gray-900 text-gray-100 min-h-screen">
+  <header class="bg-supply-green border-b border-equipment-gray py-4">
+    <div class="max-w-6xl mx-auto flex justify-between items-center px-4">
+      <h1 class="text-2xl font-bold text-revenue-gold">
+        <i class="fas fa-truck-moving mr-2"></i>Agri<span class="text-equipment-gray">Supply</span>
+      </h1>
+      <div class="flex gap-4">
+        <button id="logout-btn" class="text-sm text-revenue-gold hover:text-equipment-gray transition">
+          <i class="fas fa-sign-out-alt mr-2"></i>Logout
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto py-10 px-4">
+    <!-- Add Profile Edit Modal -->
+    <div id="profile-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+      <div class="bg-supply-green p-6 rounded-xl shadow-lg w-full max-w-md">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-xl font-semibold text-revenue-gold">
+            <i class="fas fa-user-edit mr-2"></i>Edit Profile
+          </h3>
+          <button onclick="closeProfileModal()" class="text-equipment-gray hover:text-revenue-gold">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <form id="profile-form" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-revenue-gold">Company Name</label>
+            <input type="text" id="edit-company-name" required 
+                   class="mt-1 w-full px-3 py-2 border border-equipment-gray bg-supply-green text-gray-100 rounded-md">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-revenue-gold">Contact Number</label>
+            <input type="tel" id="edit-contact" required pattern="\+[0-9]{10,15}"
+                   class="mt-1 w-full px-3 py-2 border border-equipment-gray bg-supply-green text-gray-100 rounded-md">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-revenue-gold">Main Service City</label>
+            <input type="text" id="edit-city" required 
+                   class="mt-1 w-full px-3 py-2 border border-equipment-gray bg-supply-green text-gray-100 rounded-md">
+          </div>
+          <div class="flex justify-end space-x-4">
+            <button type="button" onclick="closeProfileModal()" 
+                    class="px-4 py-2 border border-equipment-gray text-equipment-gray rounded-md">
+              Cancel
+            </button>
+            <button type="submit" class="px-4 py-2 bg-equipment-gray text-supply-green rounded-md hover:bg-revenue-gold">
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!-- Supplier Metrics -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+      <div class="bg-equipment-gray/30 p-6 rounded-xl shadow-lg animation-supply-glow">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-lg font-semibold text-revenue-gold">Total Orders</h3>
+            <p class="text-3xl font-bold mt-2" id="total-orders">0</p>
+          </div>
+          <i class="fas fa-clipboard-list text-4xl text-equipment-gray"></i>
+        </div>
+      </div>
+      <div class="bg-equipment-gray/30 p-6 rounded-xl shadow-lg animation-supply-glow">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-lg font-semibold text-revenue-gold">Available Stock</h3>
+            <p class="text-3xl font-bold mt-2" id="available-stock">0</p>
+          </div>
+          <i class="fas fa-pallet text-4xl text-equipment-gray"></i>
+        </div>
+      </div>
+      <div class="bg-equipment-gray/30 p-6 rounded-xl shadow-lg animation-supply-glow">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-lg font-semibold text-revenue-gold">Service Areas</h3>
+            <p class="text-3xl font-bold mt-2" id="service-areas">0</p>
+          </div>
+          <i class="fas fa-map-marked text-4xl text-equipment-gray"></i>
+        </div>
+      </div>
+      <div class="bg-equipment-gray/30 p-6 rounded-xl shadow-lg animation-supply-glow">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-lg font-semibold text-revenue-gold">Total Revenue</h3>
+            <p class="text-3xl font-bold mt-2" id="total-revenue">₹0</p>
+          </div>
+          <i class="fas fa-rupee-sign text-4xl text-equipment-gray"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile and Inventory Management -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Supplier Profile -->
+      <div class="lg:col-span-1">
+        <div class="bg-equipment-gray/20 p-6 rounded-xl shadow-lg mb-6">
+          <h2 class="text-xl font-semibold mb-4 text-revenue-gold">
+            <i class="fas fa-warehouse mr-2"></i>Company Profile
+          </h2>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-equipment-gray">Company Name</label>
+              <p class="mt-1 text-gray-200" id="company-name">Loading...</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-equipment-gray">Service Regions</label>
+              <p class="mt-1 text-gray-200" id="service-regions">Loading...</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-equipment-gray">Contact</label>
+              <p class="mt-1 text-gray-200" id="supplier-contact">Loading...</p>
+            </div>
+            <button id="edit-profile-btn" class="w-full bg-equipment-gray hover:bg-revenue-gold text-supply-green px-4 py-2 rounded-md transition-colors">
+              Update Profile
+            </button>
+          </div>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="bg-equipment-gray/20 p-6 rounded-xl shadow-lg">
+          <h2 class="text-xl font-semibold mb-4 text-revenue-gold">
+            <i class="fas fa-clock mr-2"></i>Reports Generation
+          </h2>
+          <div id="recent-orders" class="space-y-4">
+            <div class="bg-supply-green/30 p-4 rounded-lg animation-delivery-float">
+              <div class="flex justify-between items-center">
+                <div>
+                  <p class="font-medium">PDF</p>
+                  <p class="text-sm text-equipment-gray"></p>
+                </div>
+                <button onclick="captureAndSavePDF()" class="text-sm text-revenue-gold hover:text-equipment-gray transition">
+                  <i class="fas fa-file-pdf mr-2"></i>Generate Report
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inventory Management -->
+      <div class="lg:col-span-2">
+        <div class="bg-equipment-gray/20 p-6 rounded-xl shadow-lg">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-semibold text-revenue-gold">
+              <i class="fas fa-boxes mr-2"></i>Supply Inventory
+            </h2>
+            <button id="add-supply-btn" class="bg-equipment-gray hover:bg-revenue-gold text-supply-green px-4 py-2 rounded-md transition-colors">
+              <i class="fas fa-plus mr-2"></i>Add Supply
+            </button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr class="text-left border-b border-equipment-gray">
+                  <th class="pb-4 text-revenue-gold">Product</th>
+                  <th class="pb-4 text-revenue-gold">Price</th>
+                  <th class="pb-4 text-revenue-gold">Stock</th>
+                  <th class="pb-4 text-revenue-gold">Status</th>
+                  <th class="pb-4 text-revenue-gold">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="inventory-table">
+                <!-- Inventory items will be listed here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Supply Modal -->
+    <div id="supply-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+      <div class="bg-supply-green p-6 rounded-xl shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-xl font-semibold text-revenue-gold" id="modal-title">
+            <i class="fas fa-cube mr-2"></i>New Supply Entry
+          </h3>
+          <button id="close-modal" class="text-equipment-gray hover:text-revenue-gold">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <form id="supply-form" class="space-y-6">
+          <input type="hidden" id="supply-id">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="supply-name" class="block text-sm font-medium text-revenue-gold">Product Name</label>
+              <input type="text" id="supply-name" required class="mt-1 w-full px-3 py-2 border border-equipment-gray bg-supply-green text-gray-100 rounded-md focus:outline-none focus:ring-equipment-gray">
+            </div>
+            <div>
+              <label for="supply-type" class="block text-sm font-medium text-revenue-gold">Category</label>
+              <select id="supply-type" required class="mt-1 w-full px-3 py-2 border border-equipment-gray bg-supply-green text-gray-100 rounded-md focus:outline-none focus:ring-equipment-gray">
+                <option value="">Select Category</option>
+                <option value="seeds">Seeds</option>
+                <option value="fertilizers">Fertilizers</option>
+                <option value="equipment">Equipment</option>
+                <option value="pesticides">Pesticides</option>
+              </select>
+            </div>
+            <div>
+              <label for="supply-price" class="block text-sm font-medium text-revenue-gold">Unit Price</label>
+              <input type="number" id="supply-price" required class="mt-1 w-full px-3 py-2 border border-equipment-gray bg-supply-green text-gray-100 rounded-md focus:outline-none focus:ring-equipment-gray">
+            </div>
+            <div>
+              <label for="supply-stock" class="block text-sm font-medium text-revenue-gold">Stock Quantity</label>
+              <input type="number" id="supply-stock" required class="mt-1 w-full px-3 py-2 border border-equipment-gray bg-supply-green text-gray-100 rounded-md focus:outline-none focus:ring-equipment-gray">
+            </div>
+          </div>
+          <div>
+            <label for="supply-description" class="block text-sm font-medium text-revenue-gold">Product Description</label>
+            <textarea id="supply-description" rows="3" class="mt-1 w-full px-3 py-2 border border-equipment-gray bg-supply-green text-gray-100 rounded-md focus:outline-none focus:ring-equipment-gray"></textarea>
+          </div>
+          <div class="flex justify-end space-x-4">
+            <button type="button" id="cancel-supply" class="px-4 py-2 border border-equipment-gray text-equipment-gray rounded-md hover:bg-equipment-gray/20">
+              Cancel
+            </button>
+            <button type="submit" class="px-4 py-2 bg-equipment-gray text-supply-green rounded-md hover:bg-revenue-gold">
+              Save Supply
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <footer class="bg-supply-green border-t border-equipment-gray mt-10 py-6 text-center text-xs text-equipment-gray">
+    &copy; 2024 AgriSupply. Empowering Agricultural Distribution Networks.
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, updateDoc, arrayUnion, arrayRemove } 
+           from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCeLlMI71qya0Ij1t14xp9lqRPoHEdDkNY",
+            authDomain: "farmers-5d7eb.firebaseapp.com",
+            projectId: "farmers-5d7eb",
+            storageBucket: "farmers-5d7eb.firebasestorage.app",
+            messagingSenderId: "653225733546",
+            appId: "1:653225733546:web:10b1220d5a00030aca8fd3",
+            measurementId: "G-KHL7Z6SJQX"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Auth State Management
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      try {
+        const docRef = doc(db, "market_register", user.uid);
+        const docSnap = await getDoc(docRef);
+        
+        if (!docSnap.exists()) {
+          await signOut(auth);
+          alert("Supplier authentication failed!");
+          window.location.href = 'login.html';
+          return;
+        }
+
+        const supplierData = docSnap.data();
+        populateProfile(supplierData);
+        loadInventory(supplierData.supplierDetails?.inventory || []);
+        initializeEventListeners();
+        setupProfileForm(supplierData);
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Failed to load dashboard");
+        signOutUser();
+      }
+    });
+
+    // Profile Management Functions
+    function populateProfile(data) {
+      document.getElementById('company-name').textContent = data.name || 'Not set';
+      document.getElementById('service-regions').textContent = data.supplierDetails?.serviceAreas?.join(', ') || 'Not specified';
+      document.getElementById('supplier-contact').textContent = data.mobile || 'Not available';
+      document.getElementById('total-orders').textContent = data.supplierDetails?.totalOrders || 0;
+      document.getElementById('available-stock').textContent = data.supplierDetails?.totalStock || 0;
+      document.getElementById('service-areas').textContent = data.supplierDetails?.serviceAreas?.length || 0;
+      document.getElementById('total-revenue').textContent = `₹${(data.supplierDetails?.totalRevenue || 0).toLocaleString()}`;
+    }
+
+    function setupProfileForm(data) {
+      document.getElementById('edit-company-name').value = data.name || '';
+      document.getElementById('edit-contact').value = data.mobile || '';
+      document.getElementById('edit-city').value = data.supplierDetails?.serviceAreas?.[0] || '';
+
+      document.getElementById('profile-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        await updateProfile();
+      });
+    }
+
+    async function updateProfile() {
+      const newData = {
+        name: document.getElementById('edit-company-name').value.trim(),
+        mobile: document.getElementById('edit-contact').value.trim(),
+        supplierDetails: {
+          serviceAreas: [document.getElementById('edit-city').value.trim()]
+        }
+      };
+
+      if (!newData.mobile.startsWith('+')) {
+        alert("Mobile number must start with country code (e.g. +91)");
+        return;
+      }
+
+      try {
+        const user = auth.currentUser;
+        await updateDoc(doc(db, "market_register", user.uid), {
+          name: newData.name,
+          mobile: newData.mobile,
+          'supplierDetails.serviceAreas': newData.supplierDetails.serviceAreas
+        });
+
+        const updatedDoc = await getDoc(doc(db, "market_register", user.uid));
+        populateProfile(updatedDoc.data());
+        closeProfileModal();
+        alert("Profile updated successfully!");
+      } catch (error) {
+        alert("Profile update failed: " + error.message);
+      }
+    }
+
+    function closeProfileModal() {
+      document.getElementById('profile-modal').classList.add('hidden');
+    }
+
+    // Inventory Management Functions
+    async function loadInventory(inventory) {
+      const tbody = document.getElementById('inventory-table');
+      tbody.innerHTML = '';
+
+      if (inventory.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="text-center py-8 text-equipment-gray">
+              <i class="fas fa-box-open text-4xl mb-4"></i>
+              <p>No inventory items found</p>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      inventory.forEach(item => {
+        const row = document.createElement('tr');
+        row.className = 'border-b border-equipment-gray/20 hover:bg-equipment-gray/10';
+        row.innerHTML = `
+          <td class="py-4">${item.name}</td>
+          <td class="py-4">₹${item.price}</td>
+          <td class="py-4">${item.stock}</td>
+          <td class="py-4">
+            <span class="px-2 py-1 rounded-full text-xs ${getStockStatusClass(item.stock)}">
+              ${item.stock > 0 ? 'In Stock' : 'Out of Stock'}
+            </span>
+          </td>
+          <td class="py-4">
+            <button class="text-equipment-gray hover:text-revenue-gold mr-2" onclick="editSupply('${item.id}')">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="text-red-500 hover:text-red-300" onclick="deleteSupply('${item.id}')">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function getStockStatusClass(stock) {
+      return stock > 0 ? 'bg-green-500' : 'bg-red-500';
+    }
+
+    // Supply Management Functions
+    window.editSupply = async (supplyId) => {
+      try {
+        const user = auth.currentUser;
+        const docSnap = await getDoc(doc(db, "market_register", user.uid));
+        const supply = docSnap.data().supplierDetails.inventory.find(item => item.id === supplyId);
+
+        if (supply) {
+          document.getElementById('supply-id').value = supply.id;
+          document.getElementById('supply-name').value = supply.name;
+          document.getElementById('supply-type').value = supply.type;
+          document.getElementById('supply-price').value = supply.price;
+          document.getElementById('supply-stock').value = supply.stock;
+          document.getElementById('supply-description').value = supply.description || '';
+          document.getElementById('modal-title').textContent = 'Edit Supply';
+          document.getElementById('supply-modal').classList.remove('hidden');
+        }
+      } catch (error) {
+        alert("Error loading supply details: " + error.message);
+      }
+    };
+
+    window.deleteSupply = async (supplyId) => {
+      if (!confirm('Permanently remove this inventory item?')) return;
+
+      try {
+        const user = auth.currentUser;
+        const docRef = doc(db, "market_register", user.uid);
+        const docSnap = await getDoc(docRef);
+        
+        const updatedInventory = docSnap.data().supplierDetails.inventory
+          .filter(item => item.id !== supplyId);
+        
+        const totalStock = updatedInventory.reduce((sum, item) => sum + (item.stock || 0), 0);
+
+        await updateDoc(docRef, {
+          'supplierDetails.inventory': updatedInventory,
+          'supplierDetails.totalStock': totalStock
+        });
+
+        loadInventory(updatedInventory);
+        populateProfile((await getDoc(docRef)).data());
+        alert("Item deleted successfully!");
+      } catch (error) {
+        alert("Deletion failed: " + error.message);
+      }
+    };
+
+    async function saveSupply(e) {
+      e.preventDefault();
+      
+      const supplyData = {
+        id: document.getElementById('supply-id').value || Date.now().toString(),
+        name: document.getElementById('supply-name').value.trim(),
+        type: document.getElementById('supply-type').value,
+        price: parseFloat(document.getElementById('supply-price').value),
+        stock: parseInt(document.getElementById('supply-stock').value),
+        description: document.getElementById('supply-description').value.trim(),
+        addedAt: new Date().toISOString()
+      };
+
+      if (isNaN(supplyData.price) || isNaN(supplyData.stock)) {
+        alert("Please enter valid numbers for price and stock");
+        return;
+      }
+
+      try {
+        const user = auth.currentUser;
+        const docRef = doc(db, "market_register", user.uid);
+        const docSnap = await getDoc(docRef);
+        
+        const currentInventory = docSnap.data().supplierDetails.inventory || [];
+        const existingIndex = currentInventory.findIndex(item => item.id === supplyData.id);
+        
+        let updatedInventory;
+        if (existingIndex > -1) {
+          updatedInventory = [...currentInventory];
+          updatedInventory[existingIndex] = supplyData;
+        } else {
+          updatedInventory = [...currentInventory, supplyData];
+        }
+
+        const totalStock = updatedInventory.reduce((sum, item) => sum + item.stock, 0);
+
+        await updateDoc(docRef, {
+          'supplierDetails.inventory': updatedInventory,
+          'supplierDetails.totalStock': totalStock
+        });
+
+        closeSupplyModal();
+        loadInventory(updatedInventory);
+        populateProfile((await getDoc(docRef)).data());
+        alert("Inventory updated successfully!");
+      } catch (error) {
+        alert("Inventory update failed: " + error.message);
+      }
+    }
+
+    function closeSupplyModal() {
+      document.getElementById('supply-modal').classList.add('hidden');
+      document.getElementById('supply-form').reset();
+      document.getElementById('supply-id').value = '';
+    }
+
+    // General Functions
+    function signOutUser() {
+      signOut(auth).then(() => window.location.href = 'login.html');
+    }
+
+    function initializeEventListeners() {
+      document.getElementById('logout-btn').addEventListener('click', signOutUser);
+      document.getElementById('add-supply-btn').addEventListener('click', () => {
+        document.getElementById('supply-modal').classList.remove('hidden');
+      });
+      document.getElementById('edit-profile-btn').addEventListener('click', () => {
+        document.getElementById('profile-modal').classList.remove('hidden');
+      });
+      document.getElementById('close-modal').addEventListener('click', closeSupplyModal);
+      document.getElementById('cancel-supply').addEventListener('click', closeSupplyModal);
+      document.getElementById('supply-form').addEventListener('submit', saveSupply);
+    }
+
+    
+</script>
+
+<script>
+async function captureAndSavePDF() {
+  try {
+    // Capture webpage
+    const canvas = await html2canvas(document.body);
+    const imgData = canvas.toDataURL('image/png');
+    
+    // Create PDF
+    const pdf = new jspdf.jsPDF();
+    const imgProps = pdf.getImageProperties(imgData);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+    
+    // Add image to PDF
+    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+    
+    // Save PDF
+    pdf.save('page-screenshot.pdf');
+    
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+    alert('Failed to generate PDF');
+  }
+}
+
+
+</script>
+</body>
+</html>

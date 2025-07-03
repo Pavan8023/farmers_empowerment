@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmers Empowerment Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&family=Poppins:wght@600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f0f4f5;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            height: 100vh;
+            width: 250px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: linear-gradient(180deg, #1a2d1a 0%, #0c290f 100%);
+            border-right: 1px solid #2d5932;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-logo {
+            padding: 2rem;
+            border-bottom: 1px solid #2d5932;
+        }
+
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+            text-align: center;
+            font-family: 'Roboto Condensed', sans-serif;
+        }
+
+        .logo-subtext {
+            font-size: 0.9rem;
+            color: #8dcc93;
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            color: #b8d8bc;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .sidebar-menu a:hover {
+            background: rgba(45, 89, 50, 0.4);
+            color: #fff;
+            transform: translateX(5px);
+        }
+
+        .sidebar-menu a.active {
+            background: #2d5932;
+            color: #fff;
+        }
+
+        .menu-icon {
+            font-size: 1.2rem;
+            margin-right: 1rem;
+        }
+
+        .main-content {
+            height: 100vh;
+            margin-left: 250px; /* Default desktop margin */
+            transition: margin-left 0.3s ease;
+        }
+
+        #contentFrame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar-footer {
+            padding: 1.5rem;
+            border-top: 1px solid #2d5932;
+        }
+
+        .btn-logout {
+            width: 100%;
+            padding: 0.8rem;
+            background: #2d5932;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            background: #3a6b3f;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: #2d5932;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .main-content {
+                margin-left: 0 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+    
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-text">
+                KrishiUdaan
+                <div class="logo-subtext">Smart Farming Platform</div>
+            </div>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li>
+                <a href="#" onclick="loadPage('dashboard.html')" class="active">
+                    <span class="menu-icon">📈</span>
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <a href="#" onclick="loadPage('store-landing.html')">
+                    <span class="menu-icon">🛒</span>
+                    Marketplace
+                </a>
+            </li>
+            <li>
+                <a href="#" onclick="loadPage('community.html')">
+                    <span class="menu-icon">📚</span>
+                    Community
+                </a>
+            </li>
+            <li>
+                <a href="#" onclick="loadPage('settings.html')">
+                    <span class="menu-icon">⚙️</span>
+                    Settings
+                </a>
+            </li>
+            <li>
+                <button class="btn-logout" onclick="logout()">Logout</button>
+            </li>
+        </ul>
+        
+    </div>
+    
+    <div class="main-content" id="mainContent">
+        <iframe id="contentFrame" src="dashboard.html" frameborder="0"></iframe>
+    </div>
+
+    <script>
+        // Initialize correct layout on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const mainContent = document.getElementById('mainContent');
+            if (window.innerWidth > 768) {
+                mainContent.style.marginLeft = '250px';
+            }
+        });
+
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.getElementById('mainContent');
+            
+            if (window.innerWidth <= 768) {
+                // Mobile behavior
+                sidebar.classList.toggle('active');
+            } else {
+                // Desktop behavior
+                const isHidden = mainContent.style.marginLeft === '0px';
+                mainContent.style.marginLeft = isHidden ? '250px' : '0';
+            }
+        }
+
+        function loadPage(pageUrl) {
+            const iframe = document.getElementById('contentFrame');
+            iframe.style.opacity = '0';
+            
+            setTimeout(() => {
+                iframe.src = pageUrl;
+                iframe.style.opacity = '1';
+                
+                if (window.innerWidth <= 768) {
+                    document.querySelector('.sidebar').classList.remove('active');
+                }
+            }, 300);
+            
+            document.querySelectorAll('.sidebar-menu a').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('onclick')?.includes(pageUrl)) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = "index.html";
+        }
+
+        window.addEventListener('resize', () => {
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.getElementById('mainContent');
+            
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('active');
+                mainContent.style.marginLeft = '250px';
+            } else {
+                mainContent.style.marginLeft = '0';
+            }
+        });
+
+        document.addEventListener('click', (event) => {
+            if (window.innerWidth <= 768 && 
+                !event.target.closest('.sidebar') &&
+                !event.target.closest('.mobile-menu-btn')) {
+                document.querySelector('.sidebar').classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
